@@ -28,6 +28,12 @@ class Settings(BaseSettings):
     database_url: str = Field(default="postgresql://localhost:5432/competitor_intelligence")
     api_rate_limit: int = Field(default=250)
     log_level: str = Field(default="INFO")
+    
+    # Dashboard-specific settings
+    dashboard_port: int = Field(default=8501, description="Streamlit dashboard port")
+    dashboard_cache_ttl: int = Field(default=300, description="Cache TTL in seconds (5 minutes)")
+    dashboard_auto_refresh: int = Field(default=300, description="Auto refresh interval in seconds")
+    dashboard_page_title: str = Field(default="Tesla Competitive Intelligence Dashboard")
 
     class Config:
         env_file = ".env"
@@ -145,6 +151,25 @@ def setup_logging():
     logger.addHandler(fh)
     logger.addHandler(ch)
 
+
+# Dashboard Constants
+COMPANY_NAMES = {
+    'TSLA': 'Tesla Inc',
+    'RIVN': 'Rivian Automotive Inc',
+    'LCID': 'Lucid Group Inc'
+}
+
+COMPANY_COLORS = {
+    'TSLA': '#E31E24',  # Tesla red
+    'RIVN': '#0F4C75',  # Rivian blue
+    'LCID': '#2E8B57'   # Lucid green
+}
+
+DASHBOARD_METRICS = {
+    'revenue': {'label': 'Revenue', 'format': '$', 'unit': 'B'},
+    'eps': {'label': 'Earnings Per Share', 'format': '$', 'unit': ''},
+    'gross_profit': {'label': 'Gross Profit', 'format': '$', 'unit': 'B'}
+}
 
 # Global settings instance - handle missing env vars for testing
 try: settings = Settings()
